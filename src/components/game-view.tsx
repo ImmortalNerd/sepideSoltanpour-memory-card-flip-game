@@ -8,7 +8,7 @@ import { ICard } from "@/types/card.interface";
 //-------------------------------
 
 const GameView = () => {
-  const { cards, grid, updateGrid, moves } = useCardStore();
+  const { cards, grid, updateGrid, moves, updateCards } = useCardStore();
   const [shuffledCards, setShuffledCards] = useState<ICard[]>([]);
 
   useEffect(() => {
@@ -18,6 +18,15 @@ const GameView = () => {
     const shuffled = shuffle(totalCards);
     setShuffledCards(shuffled);
   }, [grid, cards]);
+
+  useEffect(() => {
+    if (shuffledCards.length > 0) {
+      updateCards(shuffledCards);
+      setTimeout(() => {
+        updateCards([]);
+      }, 2000);
+    }
+  }, [shuffledCards]);
 
   return (
     <div className="grid grid-rows-[80px_1fr_80px] gap-5">
@@ -49,13 +58,13 @@ const GameView = () => {
         style={{ gridTemplateColumns: `repeat(${grid}, minmax(0, 1fr))` }}
       >
         {shuffledCards.length === 0 ? (
-          <div className={`flex justify-center items-center col-span-[${grid}]`}>
+          <div
+            className={`flex justify-center items-center col-span-[${grid}]`}
+          >
             Loading ...
           </div>
         ) : (
-          shuffledCards.map((card) => (
-            <Card card={card} key={card.id} />
-          ))
+          shuffledCards.map((card) => <Card card={card} key={card.id} />)
         )}
       </div>
       <div className="flex items-center justify-center gap-5">
